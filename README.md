@@ -158,7 +158,7 @@ python app.py
 
 | Email                                     | Password |
 | ----------------------------------------- | -------- |
-| [admin@gmail.com](mailto:admin@gmail.com) | 123      |
+| [Admin@gmail.com](mailto:admin@gmail.com) | 123      |
 
 ---
 
@@ -194,7 +194,7 @@ Otlobly/
 
 ## 👨‍💻 Author
 
-Developed by **Ahmed's** 
+Developed by **Ahmed's :)** 
 
 ---
 
