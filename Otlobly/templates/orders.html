@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-3">Orders</h2>
+
+<div class="card p-3 mb-4 shadow">
+    <form method="POST" action="/order/add" class="row g-2">
+        <div class="col">
+            <input name="user_id" class="form-control" placeholder="User ID">
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary">Add Order</button>
+        </div>
+    </form>
+</div>
+
+<table class="table table-striped table-bordered shadow">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user_id }}</td>
+            <td>{{ order.total_price }}</td>
+            <td>{{ order.status }}</td>
+            <td>
+
+                <form method="POST" action="/order/{{order.id}}/update" style="display:inline;">
+                    <button class="btn btn-warning btn-sm">Update</button>
+                </form>
+
+                <a href="/order/{{order.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+
+                <form method="POST" action="/payment/add" style="display:inline;">
+                    <input type="hidden" name="order_id" value="{{order.id}}">
+                    <button class="btn btn-success btn-sm">Pay</button>
+                </form>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

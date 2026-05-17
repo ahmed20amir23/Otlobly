@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ADMIN REDIRECT (ONLY ADDITION) -->
+{% if user.role == "admin" %}
+<script>
+window.location.href = "/admin";
+</script>
+{% endif %}
+
+<style>
+.dashboard { padding: 40px; }
+
+.card-modern {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 25px;
+    transition: 0.4s;
+}
+
+.card-modern:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.stat { text-align: center; }
+.stat h2 { font-size: 40px; }
+
+.table { color: white; }
+
+/* BUTTON ULTRA ANIMATION */
+.btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+
+.btn:active {
+    transform: scale(0.92);
+}
+
+.btn::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.5s;
+}
+
+.btn:active::after {
+    width: 250%;
+    height: 250%;
+}
+
+/* TABLE HOVER */
+.table tr {
+    transition: 0.3s;
+}
+
+.table tr:hover {
+    background: rgba(255,255,255,0.05);
+}
+</style>
+
+<div class="dashboard container">
+
+<h2 class="mb-4">👋 Welcome, {{ user.name }}</h2>
+
+<!-- 📊 STATS -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card-modern stat">
+            <h2>{{ orders|length }}</h2>
+            <p>Orders</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-modern stat">
+            <h2>{{ payments|length }}</h2>
+            <p>Payments</p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card-modern stat">
+            <h2>$ {{ total }}</h2>
+            <p>Total Spent</p>
+        </div>
+    </div>
+</div>
+
+<!-- 🛒 CREATE ORDER -->
+<div class="card-modern mb-4">
+<h4>🛒 Create Order</h4>
+
+<form method="POST" action="/order">
+
+<select name="product_id" id="productSelect" class="form-control mb-3" required>
+<option disabled selected>Choose Product</option>
+{% for p in products %}
+<option value="{{ p.id }}" data-price="{{ p.price }}">
+{{ p.name }}
+</option>
+{% endfor %}
+</select>
+
+<input type="number" name="quantity" id="qtyInput"
+       class="form-control mb-3" value="1" min="1">
+
+<p><strong>Total: </strong>
+<span id="totalDisplay">$0</span></p>
+
+<button class="btn btn-success w-100">
+Create Order
+</button>
+
+</form>
+</div>
+
+<!-- 📦 ORDERS -->
+<div class="card-modern mb-4">
+<h4>Your Orders</h4>
+
+<table class="table">
+<thead>
+<tr>
+<th>ID</th>
+<th>Product</th>
+<th>Qty</th>
+<th>Total</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+{% for o, p in orders %}
+<tr>
+<td>{{ o.id }}</td>
+<td>{{ p.name }}</td>
+<td>{{ o.quantity }}</td>
+<td>${{ p.price * o.quantity }}</td>
+<td>{{ o.status }}</td>
+
+<td>
+
+<a href="/order/{{o.id}}/delete"
+   class="btn btn-danger btn-sm">
+Delete
+</a>
+
+<button class="btn btn-warning btn-sm"
+data-bs-toggle="modal"
+data-bs-target="#editModal{{o.id}}">
+Edit
+</button>
+
+{% set paid = false %}
+{% for pay in payments %}
+    {% if pay.order_id == o.id %}
+        {% set paid = true %}
+    {% endif %}
+{% endfor %}
+
+{% if paid %}
+    <button class="btn btn-success btn-sm" disabled>Paid</button>
+{% else %}
+    <form method="POST" action="/payment/add" style="display:inline;">
+        <input type="hidden" name="order_id" value="{{ o.id }}">
+        <button class="btn btn-primary btn-sm">
+            Pay
+        </button>
+    </form>
+{% endif %}
+
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+<!-- MODALS -->
+{% for o, p in orders %}
+<div class="modal fade" id="editModal{{o.id}}" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content bg-dark text-white">
+
+<div class="modal-header">
+<h5>Edit Order #{{o.id}}</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+
+<form method="POST" action="/order/{{o.id}}/update">
+
+<div class="modal-body">
+
+<select name="product_id" id="modalProduct{{o.id}}" class="form-control mb-3">
+{% for prod in products %}
+<option value="{{ prod.id }}"
+data-price="{{ prod.price }}"
+{% if prod.id == o.product_id %}selected{% endif %}>
+{{ prod.name }}
+</option>
+{% endfor %}
+</select>
+
+<input type="number" name="quantity"
+id="modalQty{{o.id}}"
+value="{{ o.quantity }}"
+class="form-control mb-3" min="1">
+
+<p><strong>Total: </strong>
+<span id="modalTotal{{o.id}}">$0</span></p>
+
+</div>
+
+<div class="modal-footer">
+<button class="btn btn-success">Save</button>
+</div>
+
+</form>
+
+</div>
+</div>
+</div>
+{% endfor %}
+
+<!-- 💳 PAYMENTS -->
+<div class="card-modern">
+<h4>Payments</h4>
+
+<table class="table">
+<tr>
+<th>Order</th>
+<th>Amount</th>
+<th>Action</th>
+</tr>
+
+{% for p in payments %}
+<tr>
+<td>{{ p.order_id }}</td>
+<td>${{ p.amount }}</td>
+<td>
+<a href="/payment/{{p.id}}/delete"
+   class="btn btn-danger btn-sm">
+Delete
+</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+</div>
+
+<!-- JS -->
+<script>
+const select = document.getElementById("productSelect");
+const qty = document.getElementById("qtyInput");
+const total = document.getElementById("totalDisplay");
+
+function updateTotal() {
+    const option = select.options[select.selectedIndex];
+    if (!option) return;
+
+    const price = option.getAttribute("data-price") || 0;
+    total.innerText = "$" + (price * qty.value);
+}
+
+select.addEventListener("change", updateTotal);
+qty.addEventListener("input", updateTotal);
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+{% for o, p in orders %}
+(function() {
+
+    const modal = document.getElementById("editModal{{o.id}}");
+    const prod = document.getElementById("modalProduct{{o.id}}");
+    const qty = document.getElementById("modalQty{{o.id}}");
+    const total = document.getElementById("modalTotal{{o.id}}");
+
+    if (!modal || !prod || !qty || !total) return;
+
+    function update() {
+        const option = prod.options[prod.selectedIndex];
+        const price = option ? option.getAttribute("data-price") : 0;
+        total.innerText = "$" + (price * qty.value);
+    }
+
+    prod.addEventListener("change", update);
+    qty.addEventListener("input", update);
+
+    modal.addEventListener("shown.bs.modal", update);
+
+    update();
+
+})();
+{% endfor %}
+
+});
+</script>
+
+{% endblock %}

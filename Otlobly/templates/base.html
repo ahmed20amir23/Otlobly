@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Otlobly</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00c6ff;
+            --secondary: #00ffcc;
+            --bg1: #0f2027;
+            --bg2: #203a43;
+            --bg3: #2c5364;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+            color: white;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🔥 NAVBAR */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.35) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* 💎 GLASS CARD */
+        .card-modern {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 25px;
+            transition: 0.4s;
+        }
+
+        .card-modern:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        /* 🔥 BUTTONS */
+        .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.92);
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: 0.5s;
+        }
+
+        .btn:active::after {
+            width: 250%;
+            height: 250%;
+        }
+
+        /* 🎨 COLORS */
+        .btn-success {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+        }
+
+        /* 🔥 TABLE */
+        table tr {
+            transition: 0.3s;
+        }
+
+        table tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* 🔥 FLASH */
+        .flash-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 3000;
+            min-width: 250px;
+        }
+
+        p {
+            color: rgba(255,255,255,0.7);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 🔥 NAVBAR -->
+<nav class="navbar navbar-dark px-4">
+    <span class="navbar-brand fw-bold fs-4">🍔 Otlobly</span>
+
+    <div>
+        <a href="/" class="btn btn-outline-light btn-sm me-2">Home</a>
+
+        {% if session.get('user_id') %}
+            <span class="me-3 text-info fw-semibold">👤 Welcome</span>
+
+            <a href="/dashboard" class="btn btn-outline-light btn-sm me-2">
+                Dashboard
+            </a>
+
+            <!-- 🔥 ADMIN BUTTON (ONLY ADDITION) -->
+            {% if user and user.role == "admin" %}
+            <a href="/admin" class="btn btn-warning btn-sm me-2">
+                Admin
+            </a>
+            {% endif %}
+
+            <a href="/logout" class="btn btn-danger btn-sm">
+                Logout
+            </a>
+        {% else %}
+            <a href="/login" class="btn btn-outline-light btn-sm me-2">
+                Login
+            </a>
+
+            <a href="/register" class="btn btn-success btn-sm">
+                Register
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+<!-- 🔥 FLASH -->
+<div class="flash-container">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show shadow">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+</div>
+
+<!-- CONTENT -->
+<div class="container-fluid">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll('.alert').forEach(a => a.remove());
+}, 3000);
+
+document.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", function(e) {
+        if (this.href && !this.href.includes("#")) {
+            e.preventDefault();
+            document.body.style.opacity = "0";
+            setTimeout(() => {
+                window.location = this.href;
+            }, 250);
+        }
+    });
+});
+</script>
+
+</body>
+</html>

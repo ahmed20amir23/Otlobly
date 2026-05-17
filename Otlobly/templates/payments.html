@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Payments</h2>
+
+<div class="card p-3 mb-4 shadow">
+    <form method="POST" action="/payment/add" class="row g-2">
+        <input name="order_id" placeholder="Order ID" class="form-control col">
+        <button class="btn btn-success col-auto">Add Payment</button>
+    </form>
+</div>
+
+<table class="table table-striped">
+    {% for p in payments %}
+    <tr>
+        <td>Order {{p.order_id}}</td>
+        <td>{{p.method}}</td>
+        <td>{{p.amount}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

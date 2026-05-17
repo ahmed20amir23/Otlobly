@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.dashboard { padding: 40px; }
+
+/* 🔥 Glass UI */
+.card-modern {
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(14px);
+    border-radius: 20px;
+    padding: 25px;
+    transition: 0.4s;
+}
+
+.card-modern:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.stat { text-align: center; }
+.stat h2 { font-size: 42px; font-weight: bold; }
+
+.table { color: white; }
+
+/* 🔥 Buttons */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* 🔥 Table hover */
+.table tr {
+    transition: 0.3s;
+}
+
+.table tr:hover {
+    background: rgba(255,255,255,0.05);
+}
+</style>
+
+<div class="dashboard container">
+
+<h2 class="mb-4">👑 Admin Dashboard</h2>
+
+<!-- 📊 STATS -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card-modern stat">
+            <h2>{{ users|length }}</h2>
+            <p>Users</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-modern stat">
+            <h2>{{ orders|length }}</h2>
+            <p>Orders</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-modern stat">
+            <h2>{{ payments|length }}</h2>
+            <p>Payments</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-modern stat">
+            <h2>$ {{ payments | sum(attribute='amount') }}</h2>
+            <p>Revenue</p>
+        </div>
+    </div>
+</div>
+
+<!-- ➕ ADD PRODUCT -->
+<div class="card-modern mb-4">
+<h4>➕ Add Product</h4>
+
+<form method="POST" action="/admin/product/add">
+
+<input type="text" name="name"
+       class="form-control mb-2"
+       placeholder="Product Name" required>
+
+<input type="number" step="0.1" name="price"
+       class="form-control mb-2"
+       placeholder="Price" required>
+
+<button class="btn btn-success w-100">
+Add Product
+</button>
+
+</form>
+</div>
+
+<!-- 👥 USERS -->
+<div class="card-modern mb-4">
+<h4>👥 Users</h4>
+
+<table class="table">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+{% for u in users %}
+<tr>
+<td>{{ u.id }}</td>
+<td>{{ u.name }}</td>
+<td>{{ u.email }}</td>
+
+<td>
+<span class="badge bg-{% if u.role == 'admin' %}danger{% else %}secondary{% endif %}">
+{{ u.role }}
+</span>
+</td>
+
+<td>
+{% if u.role != "admin" %}
+<a href="/admin/user/{{u.id}}/delete"
+   class="btn btn-danger btn-sm">
+Delete
+</a>
+{% else %}
+<span class="badge bg-secondary">Protected</span>
+{% endif %}
+</td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<!-- 📦 ORDERS -->
+<div class="card-modern mb-4">
+<h4>📦 Orders</h4>
+
+<table class="table">
+<thead>
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>Product</th>
+<th>Qty</th>
+<th>Status</th>
+<th>Update</th>
+</tr>
+</thead>
+
+<tbody>
+{% for o in orders %}
+<tr>
+<td>{{ o.id }}</td>
+
+<td>{{ o.user.name if o.user else o.user_id }}</td>
+<td>{{ o.product.name if o.product else o.product_id }}</td>
+
+<td>{{ o.quantity }}</td>
+
+<td>
+<span class="badge 
+{% if o.status == 'paid' %}bg-success
+{% elif o.status == 'shipped' %}bg-info
+{% elif o.status == 'delivered' %}bg-primary
+{% else %}bg-warning{% endif %}">
+{{ o.status }}
+</span>
+</td>
+
+<td>-</td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<!-- 💳 PAYMENTS -->
+<div class="card-modern">
+<h4>💳 Payments</h4>
+
+<table class="table">
+<thead>
+<tr>
+<th>ID</th>
+<th>Order</th>
+<th>Amount</th>
+<th>Method</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+{% for p in payments %}
+<tr>
+<td>{{ p.id }}</td>
+<td>#{{ p.order_id }}</td>
+<td>${{ p.amount }}</td>
+<td>{{ p.method }}</td>
+
+<td>
+<a href="/admin/payment/{{p.id}}/delete"
+   class="btn btn-danger btn-sm">
+Delete
+</a>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+{% endblock %}
