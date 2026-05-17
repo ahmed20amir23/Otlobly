@@ -42,7 +42,7 @@
 ![User Dashboard](Otlobly/docs/dashboard.png)
 
 ### 👑 Admin Dashboard
-![Admin Dashboard](docs/admin.png)
+![Admin Dashboard](Otlobly/docs/admin.png)
 
 ---
 
