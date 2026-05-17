@@ -39,7 +39,7 @@
 ## 📸 Screenshots
 
 ### 👤 User Dashboard
-![User Dashboard](docs/dashboard.png)
+![User Dashboard](Otlobly/docs/dashboard.png)
 
 ### 👑 Admin Dashboard
 ![Admin Dashboard](docs/admin.png)
