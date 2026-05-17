@@ -35,18 +35,14 @@
 
 ---
 
+```markdown
 ## 📸 Screenshots
 
-
-```
 ### 👤 User Dashboard
 ![User Dashboard](docs/screenshots/dashboard.png)
 
----
-
 ### 👑 Admin Dashboard
 ![Admin Dashboard](docs/screenshots/admin.png)
-```
 
 ---
 
