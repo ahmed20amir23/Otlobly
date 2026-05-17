@@ -395,5 +395,4 @@ if __name__ == "__main__":
             db.session.add(Product(name="Pizza", price=8))
             db.session.add(Product(name="Fries", price=3))
             db.session.commit()
-
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
