@@ -42,7 +42,7 @@
 ![User Dashboard](docs/dashboard.png)
 
 ### 👑 Admin Dashboard
-![Admin Dashboard](docs/screenshots/admin.png)
+![Admin Dashboard](docs/admin.png)
 
 ---
 
