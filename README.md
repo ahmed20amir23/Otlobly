@@ -37,11 +37,12 @@
 
 ## 📸 Screenshots
 
-> (Add your screenshots here 👇)
 
 ```
-docs/dashboard.png
-docs/admin.png
+<img width="1888" height="973" alt="admin" src="https://github.com/user-attachments/assets/b1d5d2b5-a085-405d-8faf-bfaf7955ca51" />
+
+<img width="1881" height="962" alt="dashboard" src="https://github.com/user-attachments/assets/71ce7bbf-a7ca-482f-9328-6974f1ce6e7c" />
+
 ```
 
 ---
